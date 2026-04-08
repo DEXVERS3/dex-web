@@ -6,14 +6,16 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
 
   const handleRun = async () => {
-    if (!input) return;
+    if (!input.trim()) return;
 
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
     const res = await fetch("/api/dex", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ input }),
     });
 
@@ -28,49 +30,62 @@ export default function Home() {
     setInput("");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleRun();
+    }
+  };
+
   return (
     <div style={styles.container}>
-      
-      {/* LEFT PANEL (future conversations) */}
-      <div style={styles.sidebar}>
-        <div style={styles.sidebarTitle}>DEX</div>
-        <div style={styles.sidebarItem}>New Thread</div>
-      </div>
+      <aside style={styles.sidebar}>
+        <div style={styles.brand}>Linus</div>
+        <div style={styles.sidebarAction}>New Thread</div>
+      </aside>
 
-      {/* MAIN WORKSPACE */}
-      <div style={styles.main}>
-        
-        {/* CONVERSATION STREAM */}
-        <div style={styles.stream}>
-          {messages.map((msg, i) => (
-            <div key={i} style={styles.messageBlock}>
-              <div
-                style={
-                  msg.role === "user"
-                    ? styles.userText
-                    : styles.dexText
-                }
-              >
-                {msg.content}
+      <main style={styles.main}>
+        <div style={styles.streamOuter}>
+          <div style={styles.streamInner}>
+            {messages.length === 0 && (
+              <div style={styles.emptyState}>
+                <div style={styles.emptyTitle}>Linus</div>
+                <div style={styles.emptyText}>Say what you mean.</div>
               </div>
-            </div>
-          ))}
+            )}
+
+            {messages.map((msg, i) => (
+              <div key={i} style={styles.messageWrap}>
+                <div
+                  style={
+                    msg.role === "user"
+                      ? styles.userMessage
+                      : styles.assistantMessage
+                  }
+                >
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* INPUT BAR */}
-        <div style={styles.inputBar}>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type naturally..."
-            style={styles.textarea}
-            rows={2}
-          />
-          <button onClick={handleRun} style={styles.button}>
-            Run
-          </button>
+        <div style={styles.inputShell}>
+          <div style={styles.inputInner}>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type naturally..."
+              rows={2}
+              style={styles.textarea}
+            />
+            <button onClick={handleRun} style={styles.button}>
+              Run
+            </button>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
@@ -79,26 +94,32 @@ const styles = {
   container: {
     display: "flex",
     height: "100vh",
-    backgroundColor: "#0e0e0e",
-    color: "#eaeaea",
-    fontFamily: "system-ui",
+    backgroundColor: "#0b0b0c",
+    color: "#e8e8e8",
+    fontFamily:
+      'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
 
   sidebar: {
     width: "220px",
-    borderRight: "1px solid #1a1a1a",
-    padding: "20px",
+    borderRight: "1px solid #17181a",
+    padding: "24px 18px",
+    backgroundColor: "#090909",
+    display: "flex",
+    flexDirection: "column",
+    gap: "18px",
   },
 
-  sidebarTitle: {
-    fontSize: "18px",
-    fontWeight: "600",
-    marginBottom: "20px",
+  brand: {
+    fontSize: "28px",
+    fontWeight: 700,
+    letterSpacing: "-0.03em",
+    color: "#f3f3f3",
   },
 
-  sidebarItem: {
+  sidebarAction: {
     fontSize: "14px",
-    color: "#aaa",
+    color: "#a1a1aa",
     cursor: "pointer",
   },
 
@@ -106,52 +127,96 @@ const styles = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    minWidth: 0,
   },
 
-  stream: {
-    padding: "40px",
-    overflowY: "auto",
+  streamOuter: {
     flex: 1,
+    overflowY: "auto",
+    padding: "36px 28px 20px",
   },
 
-  messageBlock: {
-    marginBottom: "18px",
-    lineHeight: 1.6,
+  streamInner: {
+    maxWidth: "780px",
+    margin: "0 auto",
+    width: "100%",
   },
 
-  userText: {
-    fontWeight: 600,
-    color: "#ffffff",
+  emptyState: {
+    paddingTop: "10px",
   },
 
-  dexText: {
-    color: "#b5b5b5",
+  emptyTitle: {
+    fontSize: "40px",
+    fontWeight: 700,
+    letterSpacing: "-0.04em",
+    color: "#f5f5f5",
+    marginBottom: "8px",
   },
 
-  inputBar: {
-    borderTop: "1px solid #1a1a1a",
-    padding: "20px",
+  emptyText: {
+    fontSize: "16px",
+    color: "#9ca3af",
+  },
+
+  messageWrap: {
+    marginBottom: "22px",
+  },
+
+  userMessage: {
+    color: "#fcfcfc",
+    fontWeight: 700,
+    fontSize: "15px",
+    lineHeight: 1.55,
+    letterSpacing: "-0.01em",
+    whiteSpace: "pre-wrap",
+  },
+
+  assistantMessage: {
+    color: "#b8bcc4",
+    fontWeight: 400,
+    fontSize: "15px",
+    lineHeight: 1.7,
+    letterSpacing: "-0.01em",
+    whiteSpace: "pre-wrap",
+  },
+
+  inputShell: {
+    borderTop: "1px solid #17181a",
+    padding: "16px 20px 18px",
+    backgroundColor: "#0b0b0c",
+  },
+
+  inputInner: {
+    maxWidth: "780px",
+    margin: "0 auto",
     display: "flex",
-    gap: "10px",
+    gap: "12px",
+    alignItems: "flex-end",
   },
 
   textarea: {
     flex: 1,
-    backgroundColor: "#151515",
-    color: "#eaeaea",
-    border: "1px solid #222",
-    padding: "10px",
-    borderRadius: "6px",
+    backgroundColor: "#111214",
+    color: "#f3f4f6",
+    border: "1px solid #1f2226",
+    padding: "14px 16px",
+    borderRadius: "12px",
     resize: "none",
+    outline: "none",
+    fontSize: "15px",
+    lineHeight: 1.45,
+    minHeight: "56px",
   },
 
   button: {
-    backgroundColor: "#2a2a2a",
-    color: "#fff",
-    border: "none",
-    padding: "10px 16px",
-    borderRadius: "6px",
+    backgroundColor: "#1b1d21",
+    color: "#f8f8f8",
+    border: "1px solid #2a2d31",
+    padding: "14px 18px",
+    borderRadius: "12px",
     cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: 600,
   },
 };
