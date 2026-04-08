@@ -1,11 +1,19 @@
 import OpenAI from "openai";
 
+let conversation = [];
+
 export async function POST(req) {
   try {
     const { input } = await req.json();
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    // push user input
+    conversation.push({
+      role: "user",
+      content: input,
     });
 
     const response = await client.responses.create({
@@ -16,36 +24,44 @@ export async function POST(req) {
           content: `
 You are DEX.
 
+You operate in conversation.
+
+Do not reset each response.
+Do not treat inputs as isolated.
+
+You build on prior responses.
+
 Rules:
 - No explanations
 - No filler
-- No soft language
-- No generic phrasing
-- Do not sound like AI
+- No generic tone
+- No "here's" or "understood"
 
 Behavior:
-- Execute immediately
-- Match user's tone
-- Be sharp, direct, decisive
-- If writing copy → make it sell
-- If answering → get to the point
+- Continue thinking
+- Challenge weak ideas
+- Expand strong ones
+- Respond like a human in dialogue
 
 Output:
-- Tight
-- Human
-- Intent-driven
-`
+- Direct
+- Progressive
+- Context-aware
+`,
         },
-        {
-          role: "user",
-          content: input,
-        },
+        ...conversation,
       ],
     });
 
-    return Response.json({
-      output: response.output[0].content[0].text,
+    const output = response.output[0].content[0].text;
+
+    // push assistant response
+    conversation.push({
+      role: "assistant",
+      content: output,
     });
+
+    return Response.json({ output });
   } catch (error) {
     return Response.json(
       { output: "Error: " + error.message },
