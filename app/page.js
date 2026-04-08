@@ -13,9 +13,7 @@ export default function Home() {
 
     const res = await fetch("/api/dex", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ input }),
     });
 
@@ -56,13 +54,7 @@ export default function Home() {
 
             {messages.map((msg, i) => (
               <div key={i} style={styles.messageWrap}>
-                <div
-                  style={
-                    msg.role === "user"
-                      ? styles.userMessage
-                      : styles.assistantMessage
-                  }
-                >
+                <div style={styles.unifiedText}>
                   {msg.content}
                 </div>
               </div>
@@ -160,23 +152,13 @@ const styles = {
   },
 
   messageWrap: {
-    marginBottom: "22px",
-  },
-
-  userMessage: {
-    color: "#fcfcfc",
-    fontWeight: 700,
-    fontSize: "15px",
-    lineHeight: 1.55,
-    letterSpacing: "-0.01em",
-    whiteSpace: "pre-wrap",
-  },
-
-  assistantMessage: {
-    color: "#b8bcc4",
-    fontWeight: 400,
-    fontSize: "15px",
+    marginBottom: "16px",
     lineHeight: 1.7,
+  },
+
+  unifiedText: {
+    color: "#d4d4d8",
+    fontSize: "15px",
     letterSpacing: "-0.01em",
     whiteSpace: "pre-wrap",
   },
