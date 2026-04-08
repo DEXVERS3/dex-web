@@ -3,48 +3,55 @@ import { useState } from "react";
 
 export default function Home() {
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]);
 
-  const handleSubmit = async () => {
+  const handleRun = async () => {
     if (!input) return;
 
-    setLoading(true);
+    const userMessage = { role: "user", content: input };
+
+    setMessages((prev) => [...prev, userMessage]);
 
     const res = await fetch("/api/dex", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ input }),
     });
 
     const data = await res.json();
 
-    setOutput(data.output);
-    setLoading(false);
+    const assistantMessage = {
+      role: "assistant",
+      content: data.output,
+    };
+
+    setMessages((prev) => [...prev, assistantMessage]);
+    setInput("");
   };
 
   return (
-    <main style={{ padding: 40, maxWidth: 800, margin: "0 auto" }}>
+    <div style={{ padding: 40, maxWidth: 800, margin: "0 auto" }}>
       <h1>DEX</h1>
-      <p>Say what you mean. DEX handles the rest.</p>
+
+      <div style={{ marginBottom: 20 }}>
+        {messages.map((msg, i) => (
+          <div key={i} style={{ marginBottom: 12 }}>
+            <strong>{msg.role === "user" ? "You:" : "DEX:"}</strong>
+            <div>{msg.content}</div>
+          </div>
+        ))}
+      </div>
 
       <textarea
-        rows={6}
-        style={{ width: "100%", marginTop: 20 }}
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Type naturally..."
+        rows={4}
+        style={{ width: "100%", marginBottom: 10 }}
       />
 
-      <button onClick={handleSubmit} style={{ marginTop: 20 }}>
-        {loading ? "Thinking..." : "Run"}
-      </button>
-
-      {output && (
-        <div style={{ marginTop: 40 }}>
-          <h3>Output</h3>
-          <p>{output}</p>
-        </div>
-      )}
-    </main>
+      <button onClick={handleRun}>Run</button>
+    </div>
   );
 }
