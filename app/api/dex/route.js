@@ -1,26 +1,18 @@
 import OpenAI from "openai";
 
-let conversation = [];
-
 export async function POST(req) {
   try {
-    const { input } = await req.json();
+    const { input, history = [] } = await req.json();
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    conversation.push({
-      role: "user",
-      content: input,
-    });
-
-    const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: [
-        {
-          role: "system",
-          content: `
+    // Build conversation safely per request
+    const conversation = [
+      {
+        role: "system",
+        content: `
 You are operating inside a conversational interface.
 
 Do not introduce yourself.
@@ -32,14 +24,33 @@ If greeted, respond naturally without identifying yourself.
 Core operating pattern:
 Interpret → Act → Adjust
 
-Default behavior:
-- If the user's likely intent can be reasonably inferred, act on it
-- Do not ask for permission when a strong interpretation is available
-- Do not stall with unnecessary clarification
-- Let the user refine after action
-- Only ask a question when the action path is genuinely ambiguous and multiple materially different outcomes are possible
+Primary rule:
+Once a working draft, answer, or piece of output exists in the thread, treat it as the active working context.
 
-Rules:
+Refinement rule:
+If the user gives a follow-up instruction like:
+- make it more emotional
+- tighten this
+- make it sharper
+- push urgency harder
+- make this an email
+- turn this into a radio script
+- cut it to 20 seconds
+
+then apply that instruction to the most recent full relevant output by default.
+
+Do not ask what part they mean unless:
+- the user explicitly references multiple separate targets
+- or no reasonable default exists
+
+If a strong interpretation exists, act on it.
+If context exists, prefer continuation over clarification.
+
+Only ask a question when:
+- there is no active working context
+- OR multiple materially different outcomes are equally likely
+
+Behavior rules:
 - No filler
 - No generic assistant tone
 - No unnecessary explanation
@@ -47,36 +58,44 @@ Rules:
 - Continue the thread
 - Build on prior exchanges
 - Modify prior output when directed
+- When revising, return the full revised piece unless asked otherwise
 
 Examples:
-- "fix it" → improve the most recent relevant output using the strongest obvious interpretation
-- "make it sharper" → revise the most recent relevant output to be sharper
-- "tighten this" → shorten and strengthen the most recent relevant output
-- "try again" → produce a stronger second version immediately
-- "add real beef flavor" → apply that change directly
-
-Only ask if the instruction is too ambiguous to act on intelligently.
+- "fix it" → improve the most recent output
+- "make it sharper" → revise current output
+- "tighten this" → shorten + strengthen
+- "try again" → produce a stronger version immediately
+- "make it more emotional, but don't get soft" → increase emotional intensity while preserving authority
+- "turn this into a 30-second radio script" → transform current output
+- "cut it down to 20 seconds" → compress while preserving core meaning
 
 Output:
 - Direct
 - Context-aware
 - Progressive
 - Complete
-`,
-        },
-        ...conversation,
-      ],
+        `,
+      },
+
+      // previous conversation (passed from frontend)
+      ...history,
+
+      // current user input
+      {
+        role: "user",
+        content: input,
+      },
+    ];
+
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: conversation,
     });
 
     const output =
       response.output_text ||
       response.output?.[0]?.content?.[0]?.text ||
       "No response generated.";
-
-    conversation.push({
-      role: "assistant",
-      content: output,
-    });
 
     return Response.json({ output });
   } catch (error) {
