@@ -38,7 +38,7 @@ export default function Home() {
   return (
     <div style={styles.container}>
       <aside style={styles.sidebar}>
-        <div style={styles.brand}>Linus</div>
+        <div style={styles.brand}>Spot On!</div>
         <div style={styles.sidebarAction}>New Thread</div>
       </aside>
 
@@ -47,7 +47,7 @@ export default function Home() {
           <div style={styles.streamInner}>
             {messages.length === 0 && (
               <div style={styles.emptyState}>
-                <div style={styles.emptyTitle}>Linus</div>
+                <div style={styles.emptyTitle}>Spot On!</div>
                 <div style={styles.emptyText}>Say what you mean.</div>
               </div>
             )}
