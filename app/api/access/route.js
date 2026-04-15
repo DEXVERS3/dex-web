@@ -18,7 +18,7 @@ export async function POST(req) {
       );
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     cookieStore.set("spoton_access", "granted", {
       httpOnly: true,
@@ -31,7 +31,10 @@ export async function POST(req) {
     return Response.json({ ok: true });
   } catch (error) {
     return Response.json(
-      { error: "Invalid request." },
+      {
+        error: "Invalid request.",
+        details: error.message,
+      },
       { status: 400 }
     );
   }
