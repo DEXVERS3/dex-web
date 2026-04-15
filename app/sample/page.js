@@ -10,8 +10,10 @@ export default function SamplePage() {
     <main style={styles.page}>
       <section style={styles.hero}>
         <div style={styles.wrap}>
-          <div style={styles.eyebrow}>Spot On!</div>
+          <div style={styles.brand}>Spot On!</div>
+
           <h1 style={styles.title}>Start anywhere. It keeps up.</h1>
+
           <p style={styles.copy}>
             No prompts. No setup. No explaining how to talk to it. Just say what
             you’re thinking — even if it’s messy.
@@ -232,13 +234,13 @@ const styles = {
     maxWidth: "1040px",
     margin: "0 auto",
   },
-  eyebrow: {
-    fontSize: "13px",
-    letterSpacing: "0.14em",
-    textTransform: "uppercase",
-    color: "#9ca3af",
-    marginBottom: "18px",
-    fontWeight: 700,
+  brand: {
+    fontSize: "52px",
+    fontWeight: 800,
+    lineHeight: 1,
+    letterSpacing: "-0.04em",
+    color: "#f3f3f3",
+    marginBottom: "28px",
   },
   title: {
     fontSize: "52px",
