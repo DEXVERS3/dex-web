@@ -10,8 +10,10 @@ export default function HomePage() {
     <main style={styles.page}>
       <section style={styles.hero}>
         <div style={styles.wrap}>
-          <div style={styles.eyebrow}>Spot On!</div>
+          <div style={styles.brand}>Spot On!</div>
+
           <h1 style={styles.title}>Say what you mean. Get it back right.</h1>
+
           <p style={styles.copy}>
             Spot On! is built for people who already know what they want to say,
             but don’t want to fight with the machine to get there.
@@ -31,7 +33,6 @@ export default function HomePage() {
       <section style={styles.proofSection}>
         <div style={styles.wrap}>
           <div style={styles.proofHeader}>
-            <div style={styles.proofEyebrow}>What this looks like</div>
             <h2 style={styles.proofTitle}>Messy in. Sharp out.</h2>
             <p style={styles.proofCopy}>
               You do not need to write prompts. You do not need to clean up your
@@ -134,20 +135,20 @@ const styles = {
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
   hero: {
-    padding: "96px 24px 72px",
+    padding: "72px 24px 72px",
     borderBottom: "1px solid #1a1a1c",
   },
   wrap: {
     maxWidth: "1040px",
     margin: "0 auto",
   },
-  eyebrow: {
-    fontSize: "13px",
-    letterSpacing: "0.14em",
-    textTransform: "uppercase",
-    color: "#9ca3af",
-    marginBottom: "18px",
-    fontWeight: 700,
+  brand: {
+    fontSize: "52px",
+    fontWeight: 800,
+    lineHeight: 1,
+    letterSpacing: "-0.04em",
+    color: "#f3f3f3",
+    marginBottom: "28px",
   },
   title: {
     fontSize: "64px",
@@ -193,14 +194,6 @@ const styles = {
   proofHeader: {
     maxWidth: "760px",
     marginBottom: "28px",
-  },
-  proofEyebrow: {
-    fontSize: "13px",
-    letterSpacing: "0.14em",
-    textTransform: "uppercase",
-    color: "#9ca3af",
-    marginBottom: "12px",
-    fontWeight: 700,
   },
   proofTitle: {
     fontSize: "34px",
