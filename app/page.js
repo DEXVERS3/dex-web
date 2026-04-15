@@ -10,10 +10,10 @@ export default function HomePage() {
     <main style={styles.page}>
       <section style={styles.hero}>
         <div style={styles.wrap}>
-          <div style={styles.eyebrow}>Spot On</div>
+          <div style={styles.eyebrow}>Spot On!</div>
           <h1 style={styles.title}>Say what you mean. Get it back right.</h1>
           <p style={styles.copy}>
-            Spot On is built for people who already know what they want to say,
+            Spot On! is built for people who already know what they want to say,
             but don’t want to fight with the machine to get there.
           </p>
 
@@ -48,7 +48,7 @@ export default function HomePage() {
             </div>
 
             <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On</div>
+              <div style={styles.bubbleLabel}>Spot On!</div>
               <p style={styles.bubbleText}>
                 Subject: New Gym Built for Busy Schedules
               </p>
@@ -64,7 +64,7 @@ export default function HomePage() {
             </div>
 
             <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On</div>
+              <div style={styles.bubbleLabel}>Spot On!</div>
               <p style={styles.bubbleText}>
                 Subject: Your Exclusive Gym Is Open
               </p>
@@ -80,7 +80,7 @@ export default function HomePage() {
             </div>
 
             <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On</div>
+              <div style={styles.bubbleLabel}>Spot On!</div>
               <p style={styles.bubbleHeadline}>
                 Fitness, Elevated. Anytime You Want.
               </p>
@@ -147,6 +147,7 @@ const styles = {
     textTransform: "uppercase",
     color: "#9ca3af",
     marginBottom: "18px",
+    fontWeight: 700,
   },
   title: {
     fontSize: "64px",
@@ -183,6 +184,7 @@ const styles = {
     borderRadius: "12px",
     fontWeight: 700,
     textDecoration: "none",
+    display: "inline-block",
   },
   proofSection: {
     padding: "56px 24px 24px",
@@ -198,6 +200,7 @@ const styles = {
     textTransform: "uppercase",
     color: "#9ca3af",
     marginBottom: "12px",
+    fontWeight: 700,
   },
   proofTitle: {
     fontSize: "34px",
@@ -239,6 +242,7 @@ const styles = {
     letterSpacing: "0.12em",
     color: "#9ca3af",
     marginBottom: "10px",
+    fontWeight: 700,
   },
   bubbleText: {
     margin: "0 0 10px",
