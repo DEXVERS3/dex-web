@@ -1,204 +1,147 @@
-"use client";
-import { useState } from "react";
+import Link from "next/link";
 
-export default function Home() {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
+export const metadata = {
+  title: "Spot On!",
+  description: "Say what you mean. Get it back right.",
+};
 
-  const handleRun = async () => {
-    if (!input.trim()) return;
-
-    const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
-
-    const res = await fetch("/api/dex", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input }),
-    });
-
-    const data = await res.json();
-
-    const assistantMessage = {
-      role: "assistant",
-      content: data.output,
-    };
-
-    setMessages((prev) => [...prev, assistantMessage]);
-    setInput("");
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleRun();
-    }
-  };
-
+export default function HomePage() {
   return (
-    <div style={styles.container}>
-      <aside style={styles.sidebar}>
-        <div style={styles.brand}>Spot On!</div>
-        <div style={styles.sidebarAction}>New Thread</div>
-      </aside>
+    <main style={styles.page}>
+      <section style={styles.hero}>
+        <div style={styles.wrap}>
+          <div style={styles.eyebrow}>Spot On</div>
+          <h1 style={styles.title}>Say what you mean. Get it back right.</h1>
+          <p style={styles.copy}>
+            Spot On is built for people who already know what they want to say,
+            but don’t want to fight with the machine to get there.
+          </p>
 
-      <main style={styles.main}>
-        <div style={styles.streamOuter}>
-          <div style={styles.streamInner}>
-            {messages.length === 0 && (
-              <div style={styles.emptyState}>
-                <div style={styles.emptyTitle}>Spot On!</div>
-                <div style={styles.emptyText}>Say what you mean.</div>
-              </div>
-            )}
-
-            {messages.map((msg, i) => (
-              <div key={i} style={styles.messageWrap}>
-                <div style={styles.unifiedText}>
-                  {msg.content}
-                </div>
-              </div>
-            ))}
+          <div style={styles.actions}>
+            <Link href="/access" style={styles.primaryBtn}>
+              Get access
+            </Link>
+            <Link href="/sample" style={styles.secondaryBtn}>
+              See sample
+            </Link>
           </div>
         </div>
+      </section>
 
-        <div style={styles.inputShell}>
-          <div style={styles.inputInner}>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type naturally..."
-              rows={2}
-              style={styles.textarea}
-            />
-            <button onClick={handleRun} style={styles.button}>
-              Run
-            </button>
+      <section style={styles.section}>
+        <div style={styles.wrap}>
+          <h2 style={styles.sectionTitle}>What it does</h2>
+          <div style={styles.grid}>
+            <div style={styles.card}>
+              <h3 style={styles.cardTitle}>Natural input</h3>
+              <p style={styles.cardText}>
+                Write like a person. No prompt scaffolding. No fake ceremony.
+              </p>
+            </div>
+            <div style={styles.card}>
+              <h3 style={styles.cardTitle}>Sharper return</h3>
+              <p style={styles.cardText}>
+                The app responds cleanly, directly, and without corporate fog.
+              </p>
+            </div>
+            <div style={styles.card}>
+              <h3 style={styles.cardTitle}>Fast revision</h3>
+              <p style={styles.cardText}>
+                Tighten, cut, push, soften, sharpen. Keep moving without losing the thread.
+              </p>
+            </div>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
 
 const styles = {
-  container: {
-    display: "flex",
-    height: "100vh",
-    backgroundColor: "#0b0b0c",
-    color: "#e8e8e8",
+  page: {
+    minHeight: "100vh",
+    background: "#0b0b0c",
+    color: "#f3f3f3",
     fontFamily:
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
-
-  sidebar: {
-    width: "220px",
-    borderRight: "1px solid #17181a",
-    padding: "24px 18px",
-    backgroundColor: "#090909",
+  hero: {
+    padding: "96px 24px 72px",
+    borderBottom: "1px solid #1a1a1c",
+  },
+  wrap: {
+    maxWidth: "1040px",
+    margin: "0 auto",
+  },
+  eyebrow: {
+    fontSize: "13px",
+    letterSpacing: "0.14em",
+    textTransform: "uppercase",
+    color: "#9ca3af",
+    marginBottom: "18px",
+  },
+  title: {
+    fontSize: "64px",
+    lineHeight: 1.02,
+    letterSpacing: "-0.05em",
+    maxWidth: "820px",
+    margin: "0 0 18px",
+  },
+  copy: {
+    fontSize: "20px",
+    lineHeight: 1.6,
+    color: "#b6bcc6",
+    maxWidth: "720px",
+    margin: "0 0 32px",
+  },
+  actions: {
     display: "flex",
-    flexDirection: "column",
+    gap: "14px",
+    flexWrap: "wrap",
+  },
+  primaryBtn: {
+    background: "#f3f4f6",
+    color: "#0b0b0c",
+    padding: "14px 20px",
+    borderRadius: "12px",
+    fontWeight: 700,
+    textDecoration: "none",
+  },
+  secondaryBtn: {
+    background: "#141518",
+    color: "#f3f4f6",
+    border: "1px solid #26282d",
+    padding: "14px 20px",
+    borderRadius: "12px",
+    fontWeight: 700,
+    textDecoration: "none",
+  },
+  section: {
+    padding: "56px 24px 80px",
+  },
+  sectionTitle: {
+    fontSize: "28px",
+    letterSpacing: "-0.03em",
+    marginBottom: "22px",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
     gap: "18px",
   },
-
-  brand: {
-    fontSize: "28px",
-    fontWeight: 700,
-    letterSpacing: "-0.03em",
-    color: "#f3f3f3",
+  card: {
+    background: "#111214",
+    border: "1px solid #1e2126",
+    borderRadius: "18px",
+    padding: "22px",
   },
-
-  sidebarAction: {
-    fontSize: "14px",
-    color: "#a1a1aa",
-    cursor: "pointer",
+  cardTitle: {
+    fontSize: "18px",
+    margin: "0 0 10px",
   },
-
-  main: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    minWidth: 0,
-  },
-
-  streamOuter: {
-    flex: 1,
-    overflowY: "auto",
-    padding: "36px 28px 20px",
-  },
-
-  streamInner: {
-    maxWidth: "780px",
-    margin: "0 auto",
-    width: "100%",
-  },
-
-  emptyState: {
-    paddingTop: "10px",
-  },
-
-  emptyTitle: {
-    fontSize: "40px",
-    fontWeight: 700,
-    letterSpacing: "-0.04em",
-    color: "#f5f5f5",
-    marginBottom: "8px",
-  },
-
-  emptyText: {
-    fontSize: "16px",
-    color: "#9ca3af",
-  },
-
-  messageWrap: {
-    marginBottom: "16px",
-    lineHeight: 1.7,
-  },
-
-  unifiedText: {
-    color: "#d4d4d8",
-    fontSize: "15px",
-    letterSpacing: "-0.01em",
-    whiteSpace: "pre-wrap",
-  },
-
-  inputShell: {
-    borderTop: "1px solid #17181a",
-    padding: "16px 20px 18px",
-    backgroundColor: "#0b0b0c",
-  },
-
-  inputInner: {
-    maxWidth: "780px",
-    margin: "0 auto",
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-end",
-  },
-
-  textarea: {
-    flex: 1,
-    backgroundColor: "#111214",
-    color: "#f3f4f6",
-    border: "1px solid #1f2226",
-    padding: "14px 16px",
-    borderRadius: "12px",
-    resize: "none",
-    outline: "none",
-    fontSize: "15px",
-    lineHeight: 1.45,
-    minHeight: "56px",
-  },
-
-  button: {
-    backgroundColor: "#1b1d21",
-    color: "#f8f8f8",
-    border: "1px solid #2a2d31",
-    padding: "14px 18px",
-    borderRadius: "12px",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: 600,
+  cardText: {
+    margin: 0,
+    color: "#b6bcc6",
+    lineHeight: 1.6,
   },
 };
