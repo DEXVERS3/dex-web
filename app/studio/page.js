@@ -4,26 +4,32 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [savedMessages, setSavedMessages] = useState([]);
+  const [showContinuePrompt, setShowContinuePrompt] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
-  // LOAD LAST SESSION
   useEffect(() => {
     const saved = localStorage.getItem("spoton_messages");
     if (saved) {
-      setMessages(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+      setSavedMessages(parsed);
+      setMessages(parsed);
     }
+    setHasLoaded(true);
   }, []);
 
-  // SAVE SESSION ON CHANGE
   useEffect(() => {
+    if (!hasLoaded) return;
     localStorage.setItem("spoton_messages", JSON.stringify(messages));
-  }, [messages]);
+    setSavedMessages(messages);
+  }, [messages, hasLoaded]);
 
   const handleRun = async () => {
     if (!input.trim()) return;
 
     const userMessage = { role: "user", content: input };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
 
     const res = await fetch("/api/dex", {
       method: "POST",
@@ -39,12 +45,27 @@ export default function Home() {
     };
 
     setMessages((prev) => [...prev, assistantMessage]);
-    setInput("");
   };
 
   const handleNewThread = () => {
-    localStorage.removeItem("spoton_messages");
+    if (savedMessages.length > 0) {
+      setShowContinuePrompt(true);
+    } else {
+      setMessages([]);
+      localStorage.removeItem("spoton_messages");
+    }
+  };
+
+  const handleContinueYes = () => {
+    setMessages(savedMessages);
+    setShowContinuePrompt(false);
+  };
+
+  const handleContinueNo = () => {
     setMessages([]);
+    setSavedMessages([]);
+    localStorage.removeItem("spoton_messages");
+    setShowContinuePrompt(false);
   };
 
   const handleKeyDown = (e) => {
@@ -65,6 +86,22 @@ export default function Home() {
       </aside>
 
       <main style={styles.main}>
+        {showContinuePrompt && (
+          <div style={styles.promptOverlay}>
+            <div style={styles.promptBox}>
+              <div style={styles.promptTitle}>Continue present conversation?</div>
+              <div style={styles.promptActions}>
+                <button onClick={handleContinueYes} style={styles.promptPrimary}>
+                  Yes
+                </button>
+                <button onClick={handleContinueNo} style={styles.promptSecondary}>
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div style={styles.streamOuter}>
           <div style={styles.streamInner}>
             {messages.length === 0 && (
@@ -76,9 +113,7 @@ export default function Home() {
 
             {messages.map((msg, i) => (
               <div key={i} style={styles.messageWrap}>
-                <div style={styles.unifiedText}>
-                  {msg.content}
-                </div>
+                <div style={styles.unifiedText}>{msg.content}</div>
               </div>
             ))}
           </div>
@@ -142,6 +177,62 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     minWidth: 0,
+    position: "relative",
+  },
+
+  promptOverlay: {
+    position: "absolute",
+    inset: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 20,
+  },
+
+  promptBox: {
+    backgroundColor: "#111214",
+    border: "1px solid #23262b",
+    borderRadius: "18px",
+    padding: "24px",
+    width: "100%",
+    maxWidth: "420px",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+  },
+
+  promptTitle: {
+    fontSize: "20px",
+    fontWeight: 700,
+    color: "#f3f4f6",
+    marginBottom: "18px",
+    letterSpacing: "-0.02em",
+  },
+
+  promptActions: {
+    display: "flex",
+    gap: "12px",
+  },
+
+  promptPrimary: {
+    backgroundColor: "#f3f4f6",
+    color: "#0b0b0c",
+    border: "none",
+    padding: "12px 18px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: 700,
+  },
+
+  promptSecondary: {
+    backgroundColor: "#1b1d21",
+    color: "#f8f8f8",
+    border: "1px solid #2a2d31",
+    padding: "12px 18px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: 700,
   },
 
   streamOuter: {
