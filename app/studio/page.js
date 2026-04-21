@@ -3,38 +3,69 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [savedMessages, setSavedMessages] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [activeId, setActiveId] = useState(null);
   const [showContinuePrompt, setShowContinuePrompt] = useState(false);
+  const [pendingNewThread, setPendingNewThread] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("spoton_messages");
+    const saved = localStorage.getItem("spoton_conversations");
+
     if (saved) {
       const parsed = JSON.parse(saved);
-      setSavedMessages(parsed);
-      setMessages(parsed);
+
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        setConversations(parsed);
+        setActiveId(parsed[0].id);
+      }
     }
+
     setHasLoaded(true);
   }, []);
 
   useEffect(() => {
     if (!hasLoaded) return;
-    localStorage.setItem("spoton_messages", JSON.stringify(messages));
-    setSavedMessages(messages);
-  }, [messages, hasLoaded]);
+
+    localStorage.setItem(
+      "spoton_conversations",
+      JSON.stringify(conversations)
+    );
+  }, [conversations, hasLoaded]);
+
+  const activeConversation = conversations.find((c) => c.id === activeId);
 
   const handleRun = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !activeConversation) return;
 
-    const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const trimmedInput = input.trim();
+    const userMessage = { role: "user", content: trimmedInput };
+
+    const updatedAfterUser = conversations.map((conversation) => {
+      if (conversation.id === activeId) {
+        const updatedTitle =
+          conversation.messages.length === 0
+            ? trimmedInput.slice(0, 40)
+            : conversation.title;
+
+        return {
+          ...conversation,
+          title: updatedTitle || "New Workspace",
+          updatedAt: Date.now(),
+          messages: [...conversation.messages, userMessage],
+        };
+      }
+
+      return conversation;
+    });
+
+    setConversations(updatedAfterUser);
     setInput("");
 
     const res = await fetch("/api/dex", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input }),
+      body: JSON.stringify({ input: trimmedInput }),
     });
 
     const data = await res.json();
@@ -44,28 +75,63 @@ export default function Home() {
       content: data.output,
     };
 
-    setMessages((prev) => [...prev, assistantMessage]);
+    const updatedAfterAssistant = updatedAfterUser.map((conversation) => {
+      if (conversation.id === activeId) {
+        return {
+          ...conversation,
+          updatedAt: Date.now(),
+          messages: [...conversation.messages, assistantMessage],
+        };
+      }
+
+      return conversation;
+    });
+
+    const reordered = reorderConversations(updatedAfterAssistant, activeId);
+    setConversations(reordered);
   };
 
   const handleNewThread = () => {
-    if (savedMessages.length > 0) {
+    if (activeConversation && activeConversation.messages.length > 0) {
+      setPendingNewThread(true);
       setShowContinuePrompt(true);
-    } else {
-      setMessages([]);
-      localStorage.removeItem("spoton_messages");
+      return;
     }
+
+    createNewThread();
   };
 
   const handleContinueYes = () => {
-    setMessages(savedMessages);
     setShowContinuePrompt(false);
+    setPendingNewThread(false);
   };
 
   const handleContinueNo = () => {
-    setMessages([]);
-    setSavedMessages([]);
-    localStorage.removeItem("spoton_messages");
     setShowContinuePrompt(false);
+
+    if (pendingNewThread) {
+      createNewThread();
+      setPendingNewThread(false);
+    }
+  };
+
+  const createNewThread = () => {
+    const newConversation = {
+      id: Date.now(),
+      title: "New Workspace",
+      updatedAt: Date.now(),
+      messages: [],
+    };
+
+    setConversations((prev) => [newConversation, ...prev]);
+    setActiveId(newConversation.id);
+    setInput("");
+  };
+
+  const handleSelectConversation = (id) => {
+    if (id === activeId) return;
+    setActiveId(id);
+    setInput("");
   };
 
   const handleKeyDown = (e) => {
@@ -83,13 +149,28 @@ export default function Home() {
         <div onClick={handleNewThread} style={styles.sidebarAction}>
           New Thread
         </div>
+
+        <div style={styles.threadList}>
+          {conversations.map((conversation) => (
+            <div
+              key={conversation.id}
+              onClick={() => handleSelectConversation(conversation.id)}
+              style={{
+                ...styles.threadItem,
+                ...(conversation.id === activeId ? styles.threadItemActive : {}),
+              }}
+            >
+              <div style={styles.threadTitle}>{conversation.title}</div>
+            </div>
+          ))}
+        </div>
       </aside>
 
       <main style={styles.main}>
         {showContinuePrompt && (
           <div style={styles.promptOverlay}>
             <div style={styles.promptBox}>
-              <div style={styles.promptTitle}>Continue present conversation?</div>
+              <div style={styles.promptTitle}>Continue where you left off?</div>
               <div style={styles.promptActions}>
                 <button onClick={handleContinueYes} style={styles.promptPrimary}>
                   Yes
@@ -104,14 +185,15 @@ export default function Home() {
 
         <div style={styles.streamOuter}>
           <div style={styles.streamInner}>
-            {messages.length === 0 && (
+            {(!activeConversation ||
+              activeConversation.messages.length === 0) && (
               <div style={styles.emptyState}>
                 <div style={styles.emptyTitle}>Spot On!</div>
                 <div style={styles.emptyText}>Say what you mean.</div>
               </div>
             )}
 
-            {messages.map((msg, i) => (
+            {activeConversation?.messages.map((msg, i) => (
               <div key={i} style={styles.messageWrap}>
                 <div style={styles.unifiedText}>{msg.content}</div>
               </div>
@@ -139,6 +221,15 @@ export default function Home() {
   );
 }
 
+function reorderConversations(conversations, activeId) {
+  const activeConversation = conversations.find((c) => c.id === activeId);
+  const remaining = conversations.filter((c) => c.id !== activeId);
+
+  if (!activeConversation) return conversations;
+
+  return [activeConversation, ...remaining];
+}
+
 const styles = {
   container: {
     display: "flex",
@@ -150,13 +241,14 @@ const styles = {
   },
 
   sidebar: {
-    width: "220px",
+    width: "240px",
     borderRight: "1px solid #17181a",
     padding: "24px 18px",
     backgroundColor: "#090909",
     display: "flex",
     flexDirection: "column",
     gap: "18px",
+    overflowY: "auto",
   },
 
   brand: {
@@ -170,6 +262,35 @@ const styles = {
     fontSize: "14px",
     color: "#a1a1aa",
     cursor: "pointer",
+  },
+
+  threadList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    marginTop: "4px",
+  },
+
+  threadItem: {
+    padding: "12px 12px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    backgroundColor: "transparent",
+    border: "1px solid transparent",
+  },
+
+  threadItemActive: {
+    backgroundColor: "#141518",
+    border: "1px solid #26282d",
+  },
+
+  threadTitle: {
+    fontSize: "13px",
+    lineHeight: 1.35,
+    color: "#d4d4d8",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
 
   main: {
