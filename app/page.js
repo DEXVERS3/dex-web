@@ -5,6 +5,12 @@ export const metadata = {
   description: "Say what you mean. Get it back right.",
 };
 
+const recentItems = [
+  { id: 1, title: "Gym Opening Email", time: "2 hours ago" },
+  { id: 2, title: "Radio Inventory Pitch", time: "Yesterday" },
+  { id: 3, title: "Abe Follow-Up Message", time: "2 days ago" },
+];
+
 export default function HomePage() {
   return (
     <main style={styles.page}>
@@ -26,6 +32,34 @@ export default function HomePage() {
             <Link href="/sample" style={styles.secondaryBtn}>
               See sample
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section style={styles.recentSection}>
+        <div style={styles.wrap}>
+          <div style={styles.recentHeader}>
+            <h2 style={styles.sectionTitle}>Recent Workspaces</h2>
+            <input
+              type="text"
+              placeholder="Search recent..."
+              style={styles.search}
+            />
+          </div>
+
+          <div style={styles.recentList}>
+            {recentItems.map((item) => (
+              <div key={item.id} style={styles.recentCard}>
+                <div>
+                  <div style={styles.recentTitle}>{item.title}</div>
+                  <div style={styles.recentTime}>{item.time}</div>
+                </div>
+
+                <button style={styles.continueBtn}>
+                  Continue from last time?
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -58,67 +92,6 @@ export default function HomePage() {
                 efficient, effective workouts without the hassle.
               </p>
             </div>
-
-            <div style={styles.userBubble}>
-              <div style={styles.bubbleLabel}>You</div>
-              <p style={styles.bubbleText}>shorter</p>
-            </div>
-
-            <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On!</div>
-              <p style={styles.bubbleText}>
-                Subject: Your Exclusive Gym Is Open
-              </p>
-              <p style={styles.bubbleText}>
-                [Gym Name] is open—designed for busy professionals who demand
-                quality and results.
-              </p>
-            </div>
-
-            <div style={styles.userBubble}>
-              <div style={styles.bubbleLabel}>You</div>
-              <p style={styles.bubbleText}>back to gym. headline only</p>
-            </div>
-
-            <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On!</div>
-              <p style={styles.bubbleHeadline}>
-                Fitness, Elevated. Anytime You Want.
-              </p>
-            </div>
-          </div>
-
-          <div style={styles.proofActions}>
-            <Link href="/sample" style={styles.secondaryBtn}>
-              See full example
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section style={styles.section}>
-        <div style={styles.wrap}>
-          <h2 style={styles.sectionTitle}>What it does</h2>
-          <div style={styles.grid}>
-            <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Natural input</h3>
-              <p style={styles.cardText}>
-                Write like a person. No prompt scaffolding. No fake ceremony.
-              </p>
-            </div>
-            <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Sharper return</h3>
-              <p style={styles.cardText}>
-                The app responds cleanly, directly, and without corporate fog.
-              </p>
-            </div>
-            <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Fast revision</h3>
-              <p style={styles.cardText}>
-                Tighten, cut, push, soften, sharpen. Keep moving without losing
-                the thread.
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -135,7 +108,7 @@ const styles = {
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
   hero: {
-    padding: "72px 24px 72px",
+    padding: "72px 24px",
     borderBottom: "1px solid #1a1a1c",
   },
   wrap: {
@@ -145,9 +118,7 @@ const styles = {
   brand: {
     fontSize: "52px",
     fontWeight: 800,
-    lineHeight: 1,
     letterSpacing: "-0.04em",
-    color: "#f3f3f3",
     marginBottom: "28px",
   },
   title: {
@@ -185,11 +156,62 @@ const styles = {
     borderRadius: "12px",
     fontWeight: 700,
     textDecoration: "none",
-    display: "inline-block",
+  },
+  recentSection: {
+    padding: "56px 24px",
+    borderBottom: "1px solid #1a1a1c",
+  },
+  recentHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "18px",
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginBottom: "22px",
+  },
+  search: {
+    background: "#111214",
+    border: "1px solid #26282d",
+    color: "#f3f3f3",
+    padding: "12px 14px",
+    borderRadius: "12px",
+    minWidth: "240px",
+  },
+  recentList: {
+    display: "grid",
+    gap: "14px",
+  },
+  recentCard: {
+    background: "#111214",
+    border: "1px solid #1e2126",
+    borderRadius: "18px",
+    padding: "18px 20px",
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "16px",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  recentTitle: {
+    fontSize: "18px",
+    fontWeight: 700,
+    marginBottom: "6px",
+  },
+  recentTime: {
+    color: "#9ca3af",
+    fontSize: "14px",
+  },
+  continueBtn: {
+    background: "#f3f4f6",
+    color: "#0b0b0c",
+    border: "none",
+    padding: "12px 16px",
+    borderRadius: "12px",
+    fontWeight: 700,
+    cursor: "pointer",
   },
   proofSection: {
-    padding: "56px 24px 24px",
-    borderBottom: "1px solid #1a1a1c",
+    padding: "56px 24px 80px",
   },
   proofHeader: {
     maxWidth: "760px",
@@ -197,16 +219,12 @@ const styles = {
   },
   proofTitle: {
     fontSize: "34px",
-    lineHeight: 1.1,
-    letterSpacing: "-0.04em",
-    margin: "0 0 12px",
+    marginBottom: "12px",
   },
   proofCopy: {
     fontSize: "18px",
-    lineHeight: 1.6,
     color: "#b6bcc6",
-    margin: 0,
-    maxWidth: "680px",
+    lineHeight: 1.6,
   },
   chatBlock: {
     display: "grid",
@@ -214,70 +232,33 @@ const styles = {
     maxWidth: "820px",
   },
   userBubble: {
-    justifySelf: "start",
-    maxWidth: "620px",
     background: "#141518",
     border: "1px solid #26282d",
     borderRadius: "18px",
     padding: "18px 20px",
+    maxWidth: "620px",
   },
   assistantBubble: {
-    justifySelf: "end",
-    maxWidth: "700px",
     background: "#111214",
     border: "1px solid #1e2126",
     borderRadius: "18px",
     padding: "18px 20px",
+    maxWidth: "700px",
+    justifySelf: "end",
   },
   bubbleLabel: {
     fontSize: "12px",
     textTransform: "uppercase",
-    letterSpacing: "0.12em",
     color: "#9ca3af",
     marginBottom: "10px",
     fontWeight: 700,
   },
   bubbleText: {
-    margin: "0 0 10px",
-    lineHeight: 1.6,
-    color: "#f3f3f3",
-  },
-  bubbleHeadline: {
     margin: 0,
-    lineHeight: 1.4,
-    fontSize: "20px",
-    fontWeight: 700,
-    color: "#f3f3f3",
-  },
-  proofActions: {
-    marginTop: "24px",
-  },
-  section: {
-    padding: "56px 24px 80px",
+    lineHeight: 1.6,
   },
   sectionTitle: {
     fontSize: "28px",
     letterSpacing: "-0.03em",
-    marginBottom: "22px",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: "18px",
-  },
-  card: {
-    background: "#111214",
-    border: "1px solid #1e2126",
-    borderRadius: "18px",
-    padding: "22px",
-  },
-  cardTitle: {
-    fontSize: "18px",
-    margin: "0 0 10px",
-  },
-  cardText: {
-    margin: 0,
-    color: "#b6bcc6",
-    lineHeight: 1.6,
   },
 };
