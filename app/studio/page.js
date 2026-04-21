@@ -1,15 +1,29 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 
+  // LOAD LAST SESSION
+  useEffect(() => {
+    const saved = localStorage.getItem("spoton_messages");
+    if (saved) {
+      setMessages(JSON.parse(saved));
+    }
+  }, []);
+
+  // SAVE SESSION ON CHANGE
+  useEffect(() => {
+    localStorage.setItem("spoton_messages", JSON.stringify(messages));
+  }, [messages]);
+
   const handleRun = async () => {
     if (!input.trim()) return;
 
     const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
     const res = await fetch("/api/dex", {
       method: "POST",
@@ -28,6 +42,11 @@ export default function Home() {
     setInput("");
   };
 
+  const handleNewThread = () => {
+    localStorage.removeItem("spoton_messages");
+    setMessages([]);
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -39,7 +58,10 @@ export default function Home() {
     <div style={styles.container}>
       <aside style={styles.sidebar}>
         <div style={styles.brand}>Spot On!</div>
-        <div style={styles.sidebarAction}>New Thread</div>
+
+        <div onClick={handleNewThread} style={styles.sidebarAction}>
+          New Thread
+        </div>
       </aside>
 
       <main style={styles.main}>
