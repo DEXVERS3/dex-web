@@ -6,21 +6,54 @@ export default function Home() {
   const [conversations, setConversations] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [showContinuePrompt, setShowContinuePrompt] = useState(false);
-  const [pendingNewThread, setPendingNewThread] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("spoton_conversations");
+    const savedConversations = localStorage.getItem("spoton_conversations");
+    const oldSavedMessages = localStorage.getItem("spoton_messages");
 
-    if (saved) {
-      const parsed = JSON.parse(saved);
+    if (savedConversations) {
+      const parsed = JSON.parse(savedConversations);
 
       if (Array.isArray(parsed) && parsed.length > 0) {
         setConversations(parsed);
         setActiveId(parsed[0].id);
+        setHasLoaded(true);
+        return;
       }
     }
 
+    if (oldSavedMessages) {
+      const parsedOldMessages = JSON.parse(oldSavedMessages);
+
+      if (Array.isArray(parsedOldMessages) && parsedOldMessages.length > 0) {
+        const migratedConversation = {
+          id: Date.now(),
+          title: "Previous Conversation",
+          updatedAt: Date.now(),
+          messages: parsedOldMessages,
+        };
+
+        setConversations([migratedConversation]);
+        setActiveId(migratedConversation.id);
+        localStorage.setItem(
+          "spoton_conversations",
+          JSON.stringify([migratedConversation])
+        );
+        setHasLoaded(true);
+        return;
+      }
+    }
+
+    const starterConversation = {
+      id: Date.now(),
+      title: "New Workspace",
+      updatedAt: Date.now(),
+      messages: [],
+    };
+
+    setConversations([starterConversation]);
+    setActiveId(starterConversation.id);
     setHasLoaded(true);
   }, []);
 
@@ -59,41 +92,60 @@ export default function Home() {
       return conversation;
     });
 
-    setConversations(updatedAfterUser);
+    setConversations(reorderConversations(updatedAfterUser, activeId));
     setInput("");
 
-    const res = await fetch("/api/dex", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: trimmedInput }),
-    });
+    try {
+      const res = await fetch("/api/dex", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ input: trimmedInput }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    const assistantMessage = {
-      role: "assistant",
-      content: data.output,
-    };
+      const assistantMessage = {
+        role: "assistant",
+        content: data.output || "No response returned.",
+      };
 
-    const updatedAfterAssistant = updatedAfterUser.map((conversation) => {
-      if (conversation.id === activeId) {
-        return {
-          ...conversation,
-          updatedAt: Date.now(),
-          messages: [...conversation.messages, assistantMessage],
-        };
-      }
+      const updatedAfterAssistant = updatedAfterUser.map((conversation) => {
+        if (conversation.id === activeId) {
+          return {
+            ...conversation,
+            updatedAt: Date.now(),
+            messages: [...conversation.messages, assistantMessage],
+          };
+        }
 
-      return conversation;
-    });
+        return conversation;
+      });
 
-    const reordered = reorderConversations(updatedAfterAssistant, activeId);
-    setConversations(reordered);
+      setConversations(reorderConversations(updatedAfterAssistant, activeId));
+    } catch (error) {
+      const errorMessage = {
+        role: "assistant",
+        content: "Something went wrong. Please try again.",
+      };
+
+      const updatedAfterError = updatedAfterUser.map((conversation) => {
+        if (conversation.id === activeId) {
+          return {
+            ...conversation,
+            updatedAt: Date.now(),
+            messages: [...conversation.messages, errorMessage],
+          };
+        }
+
+        return conversation;
+      });
+
+      setConversations(reorderConversations(updatedAfterError, activeId));
+    }
   };
 
   const handleNewThread = () => {
     if (activeConversation && activeConversation.messages.length > 0) {
-      setPendingNewThread(true);
       setShowContinuePrompt(true);
       return;
     }
@@ -103,16 +155,11 @@ export default function Home() {
 
   const handleContinueYes = () => {
     setShowContinuePrompt(false);
-    setPendingNewThread(false);
   };
 
   const handleContinueNo = () => {
+    createNewThread();
     setShowContinuePrompt(false);
-
-    if (pendingNewThread) {
-      createNewThread();
-      setPendingNewThread(false);
-    }
   };
 
   const createNewThread = () => {
@@ -129,7 +176,6 @@ export default function Home() {
   };
 
   const handleSelectConversation = (id) => {
-    if (id === activeId) return;
     setActiveId(id);
     setInput("");
   };
