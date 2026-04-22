@@ -7,6 +7,8 @@ export default function Home() {
   const [activeId, setActiveId] = useState(null);
   const [showContinuePrompt, setShowContinuePrompt] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [recallInput, setRecallInput] = useState("");
+  const [recallResults, setRecallResults] = useState([]);
 
   useEffect(() => {
     const savedConversations = localStorage.getItem("spoton_conversations");
@@ -173,11 +175,45 @@ export default function Home() {
     setConversations((prev) => [newConversation, ...prev]);
     setActiveId(newConversation.id);
     setInput("");
+    setRecallInput("");
+    setRecallResults([]);
   };
 
   const handleSelectConversation = (id) => {
     setActiveId(id);
     setInput("");
+    setRecallInput("");
+    setRecallResults([]);
+  };
+
+  const handleRecallSearch = (value) => {
+    setRecallInput(value);
+
+    if (!value.trim()) {
+      setRecallResults([]);
+      return;
+    }
+
+    const lower = value.toLowerCase();
+
+    const matches = conversations
+      .map((conversation) => {
+        const titleMatch = conversation.title.toLowerCase().includes(lower);
+
+        const messageMatch = conversation.messages.some((message) =>
+          message.content.toLowerCase().includes(lower)
+        );
+
+        if (titleMatch || messageMatch) {
+          return conversation;
+        }
+
+        return null;
+      })
+      .filter(Boolean)
+      .slice(0, 5);
+
+    setRecallResults(matches);
   };
 
   const handleKeyDown = (e) => {
@@ -195,6 +231,27 @@ export default function Home() {
         <div onClick={handleNewThread} style={styles.sidebarAction}>
           New Thread
         </div>
+
+        <input
+          value={recallInput}
+          onChange={(e) => handleRecallSearch(e.target.value)}
+          placeholder="Jump..."
+          style={styles.recallInput}
+        />
+
+        {recallResults.length > 0 && (
+          <div style={styles.recallResults}>
+            {recallResults.map((conversation) => (
+              <div
+                key={conversation.id}
+                onClick={() => handleSelectConversation(conversation.id)}
+                style={styles.recallItem}
+              >
+                {conversation.title}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div style={styles.threadList}>
           {conversations.map((conversation) => (
@@ -308,6 +365,37 @@ const styles = {
     fontSize: "14px",
     color: "#a1a1aa",
     cursor: "pointer",
+  },
+
+  recallInput: {
+    width: "100%",
+    padding: "10px 12px",
+    borderRadius: "10px",
+    border: "1px solid #1f2226",
+    backgroundColor: "#111214",
+    color: "#f3f4f6",
+    fontSize: "13px",
+    outline: "none",
+    boxSizing: "border-box",
+  },
+
+  recallResults: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  },
+
+  recallItem: {
+    padding: "8px 10px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "13px",
+    color: "#d4d4d8",
+    backgroundColor: "#141518",
+    border: "1px solid #23262b",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
 
   threadList: {
