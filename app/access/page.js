@@ -6,8 +6,33 @@ import { useRouter } from "next/navigation";
 export default function AccessPage() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  async function handleCheckout() {
+    setCheckoutLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      setError("Checkout did not open. Try again.");
+      setCheckoutLoading(false);
+    } catch (err) {
+      setError("Checkout broke. Try again.");
+      setCheckoutLoading(false);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,10 +66,25 @@ export default function AccessPage() {
     <main style={styles.page}>
       <div style={styles.card}>
         <div style={styles.eyebrow}>Private access</div>
-        <h1 style={styles.title}>Enter your access code</h1>
+        <h1 style={styles.title}>Get access to Spot On!</h1>
         <p style={styles.copy}>
-          Paid users and approved testers enter here.
+          Subscribe below, or enter an access code if you are an approved tester.
         </p>
+
+        <button
+          type="button"
+          onClick={handleCheckout}
+          disabled={checkoutLoading}
+          style={styles.subscribeButton}
+        >
+          {checkoutLoading ? "Opening checkout..." : "Subscribe — $6.95/month"}
+        </button>
+
+        <div style={styles.divider}>
+          <span style={styles.dividerLine}></span>
+          <span style={styles.dividerText}>or</span>
+          <span style={styles.dividerLine}></span>
+        </div>
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <input
@@ -100,6 +140,35 @@ const styles = {
     margin: "0 0 22px",
     color: "#b6bcc6",
     lineHeight: 1.6,
+  },
+  subscribeButton: {
+    width: "100%",
+    background: "#f3f4f6",
+    color: "#0b0b0c",
+    border: "none",
+    borderRadius: "12px",
+    padding: "15px 16px",
+    fontSize: "15px",
+    fontWeight: 800,
+    cursor: "pointer",
+    marginBottom: "20px",
+  },
+  divider: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    margin: "6px 0 20px",
+  },
+  dividerLine: {
+    height: "1px",
+    background: "#262a30",
+    flex: 1,
+  },
+  dividerText: {
+    color: "#9ca3af",
+    fontSize: "13px",
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
   },
   form: {
     display: "grid",
