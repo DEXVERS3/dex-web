@@ -1,9 +1,6 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-  title: "Spot On!",
-  description: "Say what you mean. Get it back right.",
-};
+import Link from "next/link";
 
 const recentItems = [
   { id: 1, title: "Gym Opening Email", time: "2 hours ago" },
@@ -12,6 +9,18 @@ const recentItems = [
 ];
 
 export default function HomePage() {
+  const handleCheckout = async () => {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+    });
+
+    const data = await res.json();
+
+    if (data?.url) {
+      window.location.href = data.url;
+    }
+  };
+
   return (
     <main style={styles.page}>
       <section style={styles.hero}>
@@ -26,9 +35,10 @@ export default function HomePage() {
           </p>
 
           <div style={styles.actions}>
-            <Link href="/access" style={styles.primaryBtn}>
+            <button onClick={handleCheckout} style={styles.primaryBtn}>
               Get access
-            </Link>
+            </button>
+
             <Link href="/sample" style={styles.secondaryBtn}>
               See sample
             </Link>
@@ -211,6 +221,9 @@ const styles = {
     borderRadius: "12px",
     fontWeight: 700,
     textDecoration: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
   },
   secondaryBtn: {
     background: "#141518",
