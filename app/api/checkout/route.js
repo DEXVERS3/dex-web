@@ -20,7 +20,10 @@ export async function POST() {
     return Response.json({ url: session.url });
   } catch (error) {
     return Response.json(
-      { error: "Checkout failed.", details: error.message },
+      {
+        error: "Stripe error",
+        message: error.message,
+      },
       { status: 500 }
     );
   }
