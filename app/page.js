@@ -9,18 +9,6 @@ const recentItems = [
 ];
 
 export default function HomePage() {
-  const handleCheckout = async () => {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-    });
-
-    const data = await res.json();
-
-    if (data?.url) {
-      window.location.href = data.url;
-    }
-  };
-
   return (
     <main style={styles.page}>
       <section style={styles.hero}>
@@ -35,9 +23,9 @@ export default function HomePage() {
           </p>
 
           <div style={styles.actions}>
-            <button onClick={handleCheckout} style={styles.primaryBtn}>
+            <Link href="/access" style={styles.primaryBtn}>
               Get access
-            </button>
+            </Link>
 
             <Link href="/sample" style={styles.secondaryBtn}>
               See sample
@@ -224,6 +212,7 @@ const styles = {
     border: "none",
     cursor: "pointer",
     fontSize: "16px",
+    display: "inline-block",
   },
   secondaryBtn: {
     background: "#141518",
