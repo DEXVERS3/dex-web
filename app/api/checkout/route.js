@@ -12,8 +12,8 @@ export async function POST() {
         quantity: 1,
       },
     ],
-    success_url: `${process.env.NEXT_PUBLIC_URL}/studio`,
-    cancel_url: `${process.env.NEXT_PUBLIC_URL}`,
+    success_url: `${process.env.NEXT_PUBLIC_URL}/studio?paid=true`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/access`,
   });
 
   return Response.json({ url: session.url });
