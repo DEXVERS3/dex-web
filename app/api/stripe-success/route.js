@@ -21,7 +21,7 @@ export async function GET(req) {
       redirect("/access");
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     cookieStore.set("spoton_access", "granted", {
       httpOnly: true,
