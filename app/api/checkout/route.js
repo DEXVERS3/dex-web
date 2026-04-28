@@ -1,6 +1,8 @@
 import Stripe from "stripe";
 import { redirect } from "next/navigation";
 
+export const runtime = "nodejs";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function createCheckoutSession() {
