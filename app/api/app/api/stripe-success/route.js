@@ -2,6 +2,8 @@ import Stripe from "stripe";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+export const runtime = "nodejs";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function GET(req) {
