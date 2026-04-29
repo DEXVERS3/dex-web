@@ -1,14 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function AccessPage() {
+function AccessPageContent() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+
+    if (!sessionId) return;
+
+    async function confirmPayment() {
+      setConfirming(true);
+      setError("");
+
+      try {
+        const res = await fetch(`/api/confirm?session_id=${sessionId}`);
+
+        if (res.ok) {
+          router.replace("/studio");
+          return;
+        }
+
+        setError("Payment completed, but access was not confirmed.");
+      } catch (err) {
+        setError("Payment completed, but confirmation failed.");
+      } finally {
+        setConfirming(false);
+      }
+    }
+
+    confirmPayment();
+  }, [searchParams, router]);
 
   async function handleCheckout() {
     setCheckoutLoading(true);
@@ -74,10 +104,14 @@ export default function AccessPage() {
         <button
           type="button"
           onClick={handleCheckout}
-          disabled={checkoutLoading}
+          disabled={checkoutLoading || confirming}
           style={styles.subscribeButton}
         >
-          {checkoutLoading ? "Opening checkout..." : "Subscribe — $6.95/month"}
+          {confirming
+            ? "Confirming payment..."
+            : checkoutLoading
+            ? "Opening checkout..."
+            : "Subscribe — $6.95/month"}
         </button>
 
         <div style={styles.divider}>
@@ -102,6 +136,14 @@ export default function AccessPage() {
         {error ? <p style={styles.error}>{error}</p> : null}
       </div>
     </main>
+  );
+}
+
+export default function AccessPage() {
+  return (
+    <Suspense fallback={null}>
+      <AccessPageContent />
+    </Suspense>
   );
 }
 
