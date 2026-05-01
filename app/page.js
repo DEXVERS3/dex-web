@@ -2,12 +2,6 @@
 
 import Link from "next/link";
 
-const recentItems = [
-  { id: 1, title: "Gym Opening Email", time: "2 hours ago" },
-  { id: 2, title: "Radio Inventory Pitch", time: "Yesterday" },
-  { id: 3, title: "Abe Follow-Up Message", time: "2 days ago" },
-];
-
 export default function HomePage() {
   return (
     <main style={styles.page}>
@@ -18,141 +12,91 @@ export default function HomePage() {
           <h1 style={styles.title}>Say what you mean. Get it back right.</h1>
 
           <p style={styles.copy}>
-            Spot On! is built for people who already know what they want to say,
-            but don’t want to fight with the machine to get there.
+            No prompts. No cleanup. Just start.
           </p>
+
+          <div style={styles.proofCard}>
+            <div style={styles.userBlock}>
+              <div style={styles.label}>You</div>
+              <p style={styles.userText}>
+                i need to follow up with this guy. dont want to sound annoying.
+                we talked last week. he said maybe. i just want to nudge it
+                without making it weird
+              </p>
+            </div>
+
+            <div style={styles.spotBlock}>
+              <div style={styles.label}>Spot On!</div>
+              <p style={styles.outputText}>
+                Just checking in on what we talked about last week.
+              </p>
+              <p style={styles.outputText}>
+                No rush at all — I know timing can be everything. If it still
+                makes sense on your end, I’m here. If not, no worries either.
+              </p>
+              <p style={styles.outputText}>
+                Either way, appreciate the conversation.
+              </p>
+            </div>
+          </div>
 
           <div style={styles.actions}>
             <Link href="/access" style={styles.primaryBtn}>
-              Get access
+              Unlock Spot On!
             </Link>
 
-            <Link href="/sample" style={styles.secondaryBtn}>
-              See sample
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section style={styles.recentSection}>
-        <div style={styles.wrap}>
-          <div style={styles.recentHeader}>
-            <h2 style={styles.sectionTitle}>Recent Workspaces</h2>
-
-            <input
-              type="text"
-              placeholder="Search recent..."
-              style={styles.search}
-            />
-          </div>
-
-          <div style={styles.recentList}>
-            {recentItems.map((item) => (
-              <div key={item.id} style={styles.recentCard}>
-                <div>
-                  <div style={styles.recentTitle}>{item.title}</div>
-                  <div style={styles.recentTime}>{item.time}</div>
-                </div>
-
-                <button style={styles.continueBtn}>
-                  Continue from last time?
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section style={styles.proofSection}>
-        <div style={styles.wrap}>
-          <div style={styles.proofHeader}>
-            <h2 style={styles.proofTitle}>Messy in. Sharp out.</h2>
-            <p style={styles.proofCopy}>
-              You do not need to write prompts. You do not need to clean up your
-              thoughts first. Just start.
-            </p>
-          </div>
-
-          <div style={styles.chatBlock}>
-            <div style={styles.userBubble}>
-              <div style={styles.bubbleLabel}>You</div>
-              <p style={styles.bubbleText}>
-                gym opening email. busy people. not cheesy. fast read
-              </p>
-            </div>
-
-            <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On!</div>
-              <p style={styles.bubbleText}>
-                Subject: New Gym Built for Busy Schedules
-              </p>
-              <p style={styles.bubbleText}>
-                We’re open. [Gym Name] is designed for busy people who want
-                efficient, effective workouts without the hassle.
-              </p>
-            </div>
-
-            <div style={styles.userBubble}>
-              <div style={styles.bubbleLabel}>You</div>
-              <p style={styles.bubbleText}>shorter</p>
-            </div>
-
-            <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On!</div>
-              <p style={styles.bubbleText}>
-                Subject: Your Exclusive Gym Is Open
-              </p>
-              <p style={styles.bubbleText}>
-                [Gym Name] is open—designed for busy professionals who demand
-                quality and results.
-              </p>
-            </div>
-
-            <div style={styles.userBubble}>
-              <div style={styles.bubbleLabel}>You</div>
-              <p style={styles.bubbleText}>back to gym. headline only</p>
-            </div>
-
-            <div style={styles.assistantBubble}>
-              <div style={styles.bubbleLabel}>Spot On!</div>
-              <p style={styles.bubbleHeadline}>
-                Fitness, Elevated. Anytime You Want.
-              </p>
-            </div>
-          </div>
-
-          <div style={styles.proofActions}>
             <Link href="/sample" style={styles.secondaryBtn}>
               See full example
             </Link>
           </div>
+
+          <p style={styles.price}>$6.95/month. Cancel anytime.</p>
         </div>
       </section>
 
       <section style={styles.section}>
         <div style={styles.wrap}>
           <h2 style={styles.sectionTitle}>What it does</h2>
+
           <div style={styles.grid}>
             <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Natural input</h3>
+              <h3 style={styles.cardTitle}>Takes messy input</h3>
               <p style={styles.cardText}>
-                Write like a person. No prompt scaffolding. No fake ceremony.
+                Say it the way it comes out. Half-formed, rough, unfinished.
+                Spot On! works from there.
               </p>
             </div>
+
             <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Sharper return</h3>
+              <h3 style={styles.cardTitle}>Returns usable language</h3>
               <p style={styles.cardText}>
-                The app responds cleanly, directly, and without corporate fog.
+                Emails, messages, copy, follow-ups, ideas — cleaned up without
+                sanding off your voice.
               </p>
             </div>
+
             <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Fast revision</h3>
+              <h3 style={styles.cardTitle}>Keeps the thread</h3>
               <p style={styles.cardText}>
-                Tighten, cut, push, soften, sharpen. Keep moving without losing
-                the thread.
+                Revise naturally. Shorter. Softer. Sharper. Less salesy. More
+                direct. Keep moving.
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section style={styles.finalSection}>
+        <div style={styles.wrap}>
+          <h2 style={styles.finalTitle}>Write like a person.</h2>
+          <p style={styles.finalCopy}>
+            Spot On! is built for people who know what they mean — they just
+            don’t want to fight the machine to get it back right.
+          </p>
+
+          <Link href="/access" style={styles.primaryBtn}>
+            Unlock Spot On!
+          </Link>
         </div>
       </section>
     </main>
@@ -168,7 +112,7 @@ const styles = {
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
   hero: {
-    padding: "72px 24px 72px",
+    padding: "72px 24px 64px",
     borderBottom: "1px solid #1a1a1c",
   },
   wrap: {
@@ -187,20 +131,62 @@ const styles = {
     fontSize: "64px",
     lineHeight: 1.02,
     letterSpacing: "-0.05em",
-    maxWidth: "820px",
+    maxWidth: "860px",
     margin: "0 0 18px",
   },
   copy: {
-    fontSize: "20px",
-    lineHeight: 1.6,
+    fontSize: "22px",
+    lineHeight: 1.5,
     color: "#b6bcc6",
     maxWidth: "720px",
     margin: "0 0 32px",
+  },
+  proofCard: {
+    background: "#111214",
+    border: "1px solid #24262b",
+    borderRadius: "22px",
+    padding: "22px",
+    maxWidth: "820px",
+    marginBottom: "28px",
+  },
+  userBlock: {
+    background: "#17181c",
+    border: "1px solid #2a2d33",
+    borderRadius: "18px",
+    padding: "18px 20px",
+    marginBottom: "16px",
+  },
+  spotBlock: {
+    background: "#0f1012",
+    border: "1px solid #202228",
+    borderRadius: "18px",
+    padding: "18px 20px",
+  },
+  label: {
+    fontSize: "12px",
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
+    color: "#9ca3af",
+    marginBottom: "10px",
+    fontWeight: 700,
+  },
+  userText: {
+    margin: 0,
+    lineHeight: 1.6,
+    color: "#f3f3f3",
+    fontSize: "17px",
+  },
+  outputText: {
+    margin: "0 0 12px",
+    lineHeight: 1.6,
+    color: "#f3f3f3",
+    fontSize: "17px",
   },
   actions: {
     display: "flex",
     gap: "14px",
     flexWrap: "wrap",
+    alignItems: "center",
   },
   primaryBtn: {
     background: "#f3f4f6",
@@ -224,133 +210,19 @@ const styles = {
     textDecoration: "none",
     display: "inline-block",
   },
-  recentSection: {
-    padding: "42px 24px 32px",
-    borderBottom: "1px solid #1a1a1c",
-  },
-  recentHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: "18px",
-    alignItems: "flex-end",
-    flexWrap: "wrap",
-    marginBottom: "18px",
-  },
-  search: {
-    background: "#111214",
-    border: "1px solid #26282d",
-    color: "#f3f3f3",
-    padding: "12px 14px",
-    borderRadius: "12px",
-    width: "280px",
-    maxWidth: "100%",
-    outline: "none",
-  },
-  recentList: {
-    display: "grid",
-    gap: "12px",
-  },
-  recentCard: {
-    background: "#111214",
-    border: "1px solid #1e2126",
-    borderRadius: "18px",
-    padding: "16px 20px",
-    display: "flex",
-    justifyContent: "space-between",
-    gap: "16px",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  recentTitle: {
-    fontSize: "18px",
-    fontWeight: 700,
-    marginBottom: "6px",
-  },
-  recentTime: {
+  price: {
+    marginTop: "12px",
     color: "#9ca3af",
     fontSize: "14px",
   },
-  continueBtn: {
-    background: "#f3f4f6",
-    color: "#0b0b0c",
-    border: "none",
-    padding: "12px 16px",
-    borderRadius: "12px",
-    fontWeight: 700,
-    cursor: "pointer",
-  },
-  proofSection: {
-    padding: "56px 24px 24px",
+  section: {
+    padding: "56px 24px",
     borderBottom: "1px solid #1a1a1c",
   },
-  proofHeader: {
-    maxWidth: "760px",
-    marginBottom: "28px",
-  },
-  proofTitle: {
-    fontSize: "34px",
-    lineHeight: 1.1,
-    letterSpacing: "-0.04em",
-    margin: "0 0 12px",
-  },
-  proofCopy: {
-    fontSize: "18px",
-    lineHeight: 1.6,
-    color: "#b6bcc6",
-    margin: 0,
-    maxWidth: "680px",
-  },
-  chatBlock: {
-    display: "grid",
-    gap: "14px",
-    maxWidth: "820px",
-  },
-  userBubble: {
-    justifySelf: "start",
-    maxWidth: "620px",
-    background: "#141518",
-    border: "1px solid #26282d",
-    borderRadius: "18px",
-    padding: "18px 20px",
-  },
-  assistantBubble: {
-    justifySelf: "end",
-    maxWidth: "700px",
-    background: "#111214",
-    border: "1px solid #1e2126",
-    borderRadius: "18px",
-    padding: "18px 20px",
-  },
-  bubbleLabel: {
-    fontSize: "12px",
-    textTransform: "uppercase",
-    letterSpacing: "0.12em",
-    color: "#9ca3af",
-    marginBottom: "10px",
-    fontWeight: 700,
-  },
-  bubbleText: {
-    margin: "0 0 10px",
-    lineHeight: 1.6,
-    color: "#f3f3f3",
-  },
-  bubbleHeadline: {
-    margin: 0,
-    lineHeight: 1.4,
-    fontSize: "20px",
-    fontWeight: 700,
-    color: "#f3f3f3",
-  },
-  proofActions: {
-    marginTop: "24px",
-  },
-  section: {
-    padding: "56px 24px 80px",
-  },
   sectionTitle: {
-    fontSize: "28px",
-    letterSpacing: "-0.03em",
-    marginBottom: "22px",
+    fontSize: "34px",
+    letterSpacing: "-0.04em",
+    margin: "0 0 24px",
   },
   grid: {
     display: "grid",
@@ -371,5 +243,21 @@ const styles = {
     margin: 0,
     color: "#b6bcc6",
     lineHeight: 1.6,
+  },
+  finalSection: {
+    padding: "56px 24px 80px",
+  },
+  finalTitle: {
+    fontSize: "38px",
+    lineHeight: 1.1,
+    letterSpacing: "-0.04em",
+    margin: "0 0 14px",
+  },
+  finalCopy: {
+    fontSize: "19px",
+    lineHeight: 1.6,
+    color: "#b6bcc6",
+    maxWidth: "720px",
+    margin: "0 0 26px",
   },
 };
