@@ -1,8 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 export default function HomePage() {
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+
+  const handleSubmit = () => {
+    if (!input.trim()) return;
+
+    setOutput(
+      `Just checking in on what we talked about last week.
+
+No rush at all — I know timing can be everything. If it still makes sense on your end, I’m here. If not, no worries either.
+
+Either way, appreciate the conversation.`
+    );
+  };
+
   return (
     <main style={styles.page}>
       <section style={styles.hero}>
@@ -11,33 +27,28 @@ export default function HomePage() {
 
           <h1 style={styles.title}>Say what you mean. Get it back right.</h1>
 
-          <p style={styles.copy}>
-            No prompts. No cleanup. Just start.
-          </p>
+          <p style={styles.copy}>No prompts. No cleanup. Just start.</p>
 
-          <div style={styles.proofCard}>
-            <div style={styles.userBlock}>
-              <div style={styles.label}>You</div>
-              <p style={styles.userText}>
-                i need to follow up with this guy. dont want to sound annoying.
-                we talked last week. he said maybe. i just want to nudge it
-                without making it weird
-              </p>
-            </div>
+          <div style={styles.tryBox}>
+            <div style={styles.tryLabel}>Try one messy thought</div>
 
-            <div style={styles.spotBlock}>
-              <div style={styles.label}>Spot On!</div>
-              <p style={styles.outputText}>
-                Just checking in on what we talked about last week.
-              </p>
-              <p style={styles.outputText}>
-                No rush at all — I know timing can be everything. If it still
-                makes sense on your end, I’m here. If not, no worries either.
-              </p>
-              <p style={styles.outputText}>
-                Either way, appreciate the conversation.
-              </p>
-            </div>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="i need to follow up with this guy. dont want to sound annoying..."
+              style={styles.textarea}
+            />
+
+            <button onClick={handleSubmit} style={styles.tryButton}>
+              See what comes back
+            </button>
+
+            {output && (
+              <div style={styles.outputBox}>
+                <div style={styles.label}>Spot On!</div>
+                <p style={styles.outputText}>{output}</p>
+              </div>
+            )}
           </div>
 
           <div style={styles.actions}>
@@ -46,7 +57,7 @@ export default function HomePage() {
             </Link>
 
             <Link href="/sample" style={styles.secondaryBtn}>
-              See full example
+              See another example
             </Link>
           </div>
 
@@ -89,6 +100,7 @@ export default function HomePage() {
       <section style={styles.finalSection}>
         <div style={styles.wrap}>
           <h2 style={styles.finalTitle}>Write like a person.</h2>
+
           <p style={styles.finalCopy}>
             Spot On! is built for people who know what they mean — they just
             don’t want to fight the machine to get it back right.
@@ -141,7 +153,7 @@ const styles = {
     maxWidth: "720px",
     margin: "0 0 32px",
   },
-  proofCard: {
+  tryBox: {
     background: "#111214",
     border: "1px solid #24262b",
     borderRadius: "22px",
@@ -149,18 +161,47 @@ const styles = {
     maxWidth: "820px",
     marginBottom: "28px",
   },
-  userBlock: {
-    background: "#17181c",
-    border: "1px solid #2a2d33",
-    borderRadius: "18px",
-    padding: "18px 20px",
-    marginBottom: "16px",
+  tryLabel: {
+    fontSize: "14px",
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
+    color: "#9ca3af",
+    marginBottom: "12px",
+    fontWeight: 700,
   },
-  spotBlock: {
+  textarea: {
+    width: "100%",
+    minHeight: "110px",
+    resize: "vertical",
+    background: "#17181c",
+    color: "#f3f3f3",
+    border: "1px solid #2a2d33",
+    borderRadius: "16px",
+    padding: "16px",
+    fontSize: "17px",
+    lineHeight: 1.5,
+    outline: "none",
+    boxSizing: "border-box",
+    marginBottom: "14px",
+    fontFamily: "inherit",
+  },
+  tryButton: {
+    background: "#f3f4f6",
+    color: "#0b0b0c",
+    padding: "14px 20px",
+    borderRadius: "12px",
+    fontWeight: 700,
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+    marginBottom: "18px",
+  },
+  outputBox: {
     background: "#0f1012",
     border: "1px solid #202228",
     borderRadius: "18px",
     padding: "18px 20px",
+    whiteSpace: "pre-wrap",
   },
   label: {
     fontSize: "12px",
@@ -170,14 +211,8 @@ const styles = {
     marginBottom: "10px",
     fontWeight: 700,
   },
-  userText: {
-    margin: 0,
-    lineHeight: 1.6,
-    color: "#f3f3f3",
-    fontSize: "17px",
-  },
   outputText: {
-    margin: "0 0 12px",
+    margin: 0,
     lineHeight: 1.6,
     color: "#f3f3f3",
     fontSize: "17px",
